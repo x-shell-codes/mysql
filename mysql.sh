@@ -4,9 +4,6 @@
 # Web   : https://x-shell.codes/scripts/mysql                                                                          #
 # Email : mailto:mysql.script@x-shell.codes                                                                            #
 # GitHub: https://github.com/x-shell-codes/mysql                                                                       #
-# Web   : https://x-shell.codes/scripts/mysql                                                                          #
-# Email : mailto:mysql.script@x-shell.codes                                                                            #
-# GitHub: https://github.com/x-shell-codes/mysql                                                                       #
 ########################################################################################################################
 # Contact The Developer:                                                                                               #
 # https://www.mehmetogmen.com.tr - mailto:www@mehmetogmen.com.tr                                                       #
@@ -16,8 +13,6 @@
 # Constants                                                                                                            #
 ########################################################################################################################
 NORMAL_LINE=$(tput sgr0)
-BLACK_LINE=$(tput setaf 0)
-WHITE_LINE=$(tput setaf 7)
 RED_LINE=$(tput setaf 1)
 YELLOW_LINE=$(tput setaf 3)
 GREEN_LINE=$(tput setaf 2)
@@ -26,38 +21,6 @@ POWDER_BLUE_LINE=$(tput setaf 153)
 BRIGHT_LINE=$(tput bold)
 REVERSE_LINE=$(tput smso)
 UNDER_LINE=$(tput smul)
-
-########################################################################################################################
-# Version                                                                                                              #
-########################################################################################################################
-function Version() {
-  echo "MySQL install script version 1.0.0"
-  echo
-  echo "${BRIGHT_LINE}${UNDER_LINE}Find Us${NORMAL}"
-  echo "${BRIGHT_LINE}Author${NORMAL}: Mehmet ÖĞMEN"
-  echo "${BRIGHT_LINE}Web${NORMAL}   : https://x-shell.codes/scripts/mysql"
-  echo "${BRIGHT_LINE}Email${NORMAL} : mailto:mysql.script@x-shell.codes"
-  echo "${BRIGHT_LINE}GitHub${NORMAL}: https://github.com/x-shell-codes/mysql"
-  echo "${BRIGHT_LINE}Web${NORMAL}   : https://x-shell.codes/scripts/mysql"
-  echo "${BRIGHT_LINE}Email${NORMAL} : mailto:mysql.script@x-shell.codes"
-  echo "${BRIGHT_LINE}GitHub${NORMAL}: https://github.com/x-shell-codes/mysql"
-}
-
-########################################################################################################################
-# Help                                                                                                                 #
-########################################################################################################################
-function Help() {
-  echo "It install the basic packages required for x-shell.codes projects."
-  echo "MySQL install & configuration script."
-  echo
-  echo "Options:"
-  echo "-p | --password    MySQL dba user password."
-  echo "-r | --isRemote    Is remote access server? (true/false)."
-  echo "-h | --help        Display this help."
-  echo "-V | --version     Print software version and exit."
-  echo
-  echo "For more details see https://github.com/x-shell-codes/mysql."
-}
 
 ########################################################################################################################
 # Line Helper Functions                                                                                                #
@@ -80,6 +43,35 @@ function SuccessLine() {
 function InfoLine() {
     echo "${BLUE_LINE}$1${NORMAL_LINE}"
   echo "${BLUE_LINE}$1${NORMAL_LINE}"
+}
+
+########################################################################################################################
+# Version                                                                                                              #
+########################################################################################################################
+function Version() {
+  echo "MySQL install script version 1.0.0"
+  echo
+  echo "${BRIGHT_LINE}${UNDER_LINE}Find Us${NORMAL}"
+  echo "${BRIGHT_LINE}Author${NORMAL}: Mehmet ÖĞMEN"
+  echo "${BRIGHT_LINE}Web${NORMAL}   : https://x-shell.codes/scripts/mysql"
+  echo "${BRIGHT_LINE}Email${NORMAL} : mailto:mysql.script@x-shell.codes"
+  echo "${BRIGHT_LINE}GitHub${NORMAL}: https://github.com/x-shell-codes/mysql"
+}
+
+########################################################################################################################
+# Help                                                                                                                 #
+########################################################################################################################
+function Help() {
+  echo "It install the basic packages required for x-shell.codes projects."
+  echo "MySQL install & configuration script."
+  echo
+  echo "Options:"
+  echo "-p | --password    MySQL dba user password."
+  echo "-r | --isRemote    Is remote access server? (true/false)."
+  echo "-h | --help        Display this help."
+  echo "-V | --version     Print software version and exit."
+  echo
+  echo "For more details see https://github.com/x-shell-codes/mysql."
 }
 
 ########################################################################################################################
@@ -136,10 +128,11 @@ echo "${POWDER_BLUE_LINE}${BRIGHT_LINE}${REVERSE_LINE}MYSQl INSTALLATION${NORMAL
 
 CheckRootUser
 
-apt-get install -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y --force-yes pkg-config \
+export DEBIAN_FRONTEND=noninteractive
+
+apt install -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y --force-yes pkg-config \
  build-essential fail2ban gcc g++ libmcrypt4 libpcre3-dev make python3 python3-pip sendmail supervisor ufw curl whois\
   zip unzip zsh ncdu uuid-runtime acl libpng-dev libmagickwand-dev libpcre2-dev cron jq net-tools
-export DEBIAN_FRONTEND=noninteractive
 
 # Add MySQL Keys...
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 467B942D3A79BD29
@@ -154,7 +147,7 @@ if [ $(version $UBUNTU_VERSION) -le $(version "20.04") ]; then
   wget -c https://dev.mysql.com/get/mysql-apt-config_0.8.15-1_all.deb
   dpkg --install mysql-apt-config_0.8.15-1_all.deb
 
-  apt-get update
+  apt update
 fi
 
 # Set The Automated Root Password
@@ -163,8 +156,8 @@ debconf-set-selections <<<"mysql-community-server mysql-community-server/root-pa
 debconf-set-selections <<<"mysql-community-server mysql-community-server/re-root-pass password $password"
 
 # Install MySQL
-apt-get install -y mysql-community-server
-apt-get install -y mysql-server
+apt install -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y --force-yes mysql-community-server
+apt install -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y --force-yes mysql-server
 
 # Configure Password Expiration
 echo "default_password_lifetime = 0" >>/etc/mysql/mysql.conf.d/mysqld.cnf
